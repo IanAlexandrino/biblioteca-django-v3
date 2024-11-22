@@ -8,6 +8,7 @@ class LivroList(generics.ListCreateAPIView):
     queryset = Livro.objects.all()
     serializer_class = LivroSerializer
     filterset_class = LivroFilter
+    permission_classes = [permissions.IsAuthenticated]
     ordering_fields = ['titulo', 'autor', 'categoria', 'publicado_em']
     search_fields = ['^titulo', '^autor__nome', '^categoria__nome']
 
@@ -15,11 +16,13 @@ class LivroDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Livro.objects.all()
     serializer_class = LivroSerializer
     name = "livro-detail"
+    permission_classes = [permissions.IsAuthenticated]
 
 class CategoriaList(generics.ListCreateAPIView):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
     filterset_class = CategoriaFilter
+    permission_classes = [permissions.IsAuthenticated]
     ordering_fields = ['nome']
     search_fields = ['^nome']
 
@@ -27,11 +30,13 @@ class CategoriaDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
     name = "categoria-detail"
+    permission_classes = [permissions.IsAuthenticated]
 
 class AutorList(generics.ListCreateAPIView):
     queryset = Autor.objects.all()
     serializer_class = AutorSerializer
     filterset_class = AutorFilter
+    permission_classes = [permissions.IsAuthenticated]
     ordering_fields = ['nome']
     search_fields = ['^nome']
 
@@ -39,6 +44,7 @@ class AutorDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Autor.objects.all()
     serializer_class = AutorSerializer
     name = "autor-detail"
+    permission_classes = [permissions.IsAuthenticated]
 
 class ColecaoListCreate(generics.ListCreateAPIView):
     queryset = Colecao.objects.all()
@@ -54,4 +60,5 @@ class ColecaoListCreate(generics.ListCreateAPIView):
 class ColecaoDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Colecao.objects.all()
     serializer_class = ColecaoSerializer
+    name = "colecao-detail"
     permission_classes = [permissions.IsAuthenticated, IsColecionadorOrReadOnly]
