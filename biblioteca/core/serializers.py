@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Categoria, Autor, Livro
+from .models import Categoria, Autor, Livro, Colecao
 
 class CategoriaSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
@@ -46,4 +46,30 @@ class LivroSerializer(serializers.Serializer):
         instance.publicado_em = validated_data.get('publicado_em', instance.publicado_em)
         instance.save()
 
+        return instance
+    
+
+class ColecaoSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    nome = serializers.CharField(max_length=100)
+    descricao = serializers.CharField(allow_blank=True)
+    livros = serializers.PrimaryKeyRelatedField(queryset=Livro.objects.all(), many=True)
+    colecionador = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    def create(self, validated_data):
+        livros_data = validated_data.pop('livros', [])
+        colecao = Colecao.objects.create(**validated_data)
+        colecao.livros.set(livros_data)
+        
+        return colecao
+
+    def update(self, instance, validated_data):
+        instance.nome = validated_data.get('nome', instance.nome)
+        instance.descricao = validated_data.get('descricao', instance.descricao)
+        livros_data = validated_data.get('livros')
+        
+        if livros_data is not None:
+            instance.livros.set(livros_data)
+        
+        instance.save()
         return instance

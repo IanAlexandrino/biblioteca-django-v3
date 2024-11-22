@@ -1,7 +1,8 @@
-from rest_framework import generics
-from .models import Livro, Categoria, Autor
-from .serializers import LivroSerializer, CategoriaSerializer, AutorSerializer
+from rest_framework import generics, permissions
+from .models import Livro, Categoria, Autor, Colecao
+from .serializers import LivroSerializer, CategoriaSerializer, AutorSerializer, ColecaoSerializer
 from .filters import LivroFilter, CategoriaFilter, AutorFilter
+from .custom_permissions import IsColecionadorOrReadOnly
 
 class LivroList(generics.ListCreateAPIView):
     queryset = Livro.objects.all()
@@ -38,3 +39,19 @@ class AutorDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Autor.objects.all()
     serializer_class = AutorSerializer
     name = "autor-detail"
+
+class ColecaoListCreate(generics.ListCreateAPIView):
+    queryset = Colecao.objects.all()
+    serializer_class = ColecaoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    ordering_fields = ['nome', 'descricao', 'colecionador']
+    search_fields = ['^nome', '^descricao', 'colecionador__username']
+
+    def perform_create(self, serializer):
+        serializer.save(colecionador=self.request.user)
+
+
+class ColecaoDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Colecao.objects.all()
+    serializer_class = ColecaoSerializer
+    permission_classes = [permissions.IsAuthenticated, IsColecionadorOrReadOnly]
