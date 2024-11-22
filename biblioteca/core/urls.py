@@ -1,4 +1,3 @@
-from rest_framework.authtoken.views import obtain_auth_token
 from django.urls import path
 from . import views
 
@@ -11,5 +10,4 @@ urlpatterns = [
     path('autores/<int:pk>/', views.AutorDetail.as_view(), name='autor-detail'),
     path('colecoes/', views.ColecaoListCreate.as_view(), name='colecoes-list'),
     path('colecoes/<int:pk>/', views.ColecaoDetail.as_view(), name='colecao-detail'),
-    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 ]
