@@ -5,4 +5,7 @@ class IsColecionadorOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return obj.colecionador == request.user
+        if obj.colecionador != request.user:
+            return False
+
+        return True

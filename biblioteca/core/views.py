@@ -47,11 +47,13 @@ class AutorDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
 class ColecaoListCreate(generics.ListCreateAPIView):
-    queryset = Colecao.objects.all()
     serializer_class = ColecaoSerializer
     permission_classes = [permissions.IsAuthenticated]
     ordering_fields = ['nome', 'descricao', 'colecionador']
     search_fields = ['^nome', '^descricao', 'colecionador__username']
+
+    def get_queryset(self):
+        return Colecao.objects.filter(colecionador=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(colecionador=self.request.user)
@@ -62,3 +64,8 @@ class ColecaoDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ColecaoSerializer
     name = "colecao-detail"
     permission_classes = [permissions.IsAuthenticated, IsColecionadorOrReadOnly]
+
+    def delete(self, request, *args, **kwargs):
+        obj = self.get_object()
+        self.check_object_permissions(request, obj)
+        return super().delete(request, *args, **kwargs)
